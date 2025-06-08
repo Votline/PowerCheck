@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
+
+	"PowerCheck/internal/digits"
 )
 
 const windowWidth = 210
@@ -27,4 +29,15 @@ func CreateWindow() *glfw.Window  {
 	vidMode := glfw.GetPrimaryMonitor().GetVideoMode()
 	window.SetPos(vidMode.Width-220, vidMode.Height-1075)
 	return window
+}
+
+func GetDigits(power string) ([]float32, []int32) {
+	var offset float32  = 0.0
+	var allV []float32
+	var vQn []int32
+	for _, ch := range power {
+		digits.GetVert(ch, offset, &allV, &vQn)
+		offset += 0.2
+	}
+	return allV, vQn
 }

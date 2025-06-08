@@ -4,7 +4,7 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 
 	"PowerCheck/internal/shaders"
-	"PowerCheck/internal/digits"
+	"PowerCheck/internal/ui"
 )
 
 func Setup() uint32 {
@@ -36,18 +36,17 @@ func Setup() uint32 {
 
 func Digits() {
 	var power string = "100"
-	var offset float32 = 0
-	var allV []float32
-	var vQn []int32
+	allV, vQn := ui.GetDigits(power)
+	draw(allV, vQn)
+}
 
-
-	for _, ch := range power {
-		digits.GetVert(ch, offset, &allV, &vQn)
-		offset += 0.2
-	}
-
+/*func Buttons() {
+	allV, vQn := ui.GetButtons()
+	draw(allV, vQn)
+}
+*/
+func draw(allV []float32, vQn []int32) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(allV)*4, gl.Ptr(allV), gl.STATIC_DRAW)
-	
 	start := int32(0)
 	for _, vt := range vQn {
 		gl.DrawArrays(gl.LINE_STRIP, start, vt)
