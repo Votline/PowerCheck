@@ -24,7 +24,6 @@ func main() {
 	
 	window := ui.CreateWindow()
 	if window == nil {return}
-	window.MakeContextCurrent()
 
 	if err := gl.Init(); err != nil {
 		log.Fatalln("OpenGL init error. \nErr: ", err)
@@ -34,6 +33,8 @@ func main() {
 
 	for !window.ShouldClose() {
 		gl.Clear(gl.COLOR_BUFFER_BIT)
+		
+		render.Digits()
 
 		window.SwapBuffers()
 		glfw.PollEvents()

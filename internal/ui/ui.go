@@ -22,5 +22,9 @@ func CreateWindow() *glfw.Window  {
 		log.Println("Create window error. \nErr: ", err)
 		window = nil
 	}
+	window.MakeContextCurrent()
+	glfw.SwapInterval(1)
+	vidMode := glfw.GetPrimaryMonitor().GetVideoMode()
+	window.SetPos(vidMode.Width-220, vidMode.Height-1075)
 	return window
 }
