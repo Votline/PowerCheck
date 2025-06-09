@@ -6,10 +6,16 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"PowerCheck/internal/digits"
+	"PowerCheck/internal/shapes"
 	"PowerCheck/internal/letters"
 )
 
-const windowWidth = 210
+type Btn struct {
+	X1, Y1 float32
+	X2, Y2 float32
+}
+
+const windowWidth = 200
 const windowHeight = 90
 
 func CreateWindow() *glfw.Window  {
@@ -38,6 +44,8 @@ func GetDigits(power string) ([]float32, []int32) {
 		allV []float32
 		vQn []int32
 	)
+	if len(power) == 4096 {offset += 0.15
+	} else if len(power) < 4096 {offset += 0.25}
 	for _, ch := range power {
 		digits.GetVert(ch, offset, &allV, &vQn)
 		offset += 0.2
@@ -56,8 +64,22 @@ func GetButtons() ([]float32, []int32) {
 	)
 
 	for _, ch := range s {
+		if ch == ' ' {offset += 0.7}
 		letters.GetVert(ch, offset, &allV, &vQn, &width)
 		offset += width
 	}
+	sdBtn := Btn{X1: -0.85, Y1: -0.3, X2: -0.18, Y2: -0.8}
+	ssBtn := Btn{X1: 0.17, Y1: -0.3, X2: 0.85, Y2: -0.8}
+
+	sdBtnVt := shapes.CreateQuad(
+		sdBtn.X1, sdBtn.Y1, 
+		sdBtn.X2, sdBtn.Y2)
+	ssBtnVt := shapes.CreateQuad(
+		ssBtn.X1, ssBtn.Y1, 
+		ssBtn.X2, ssBtn.Y2)
+	allV = append(allV, sdBtnVt...)
+	allV = append(allV, ssBtnVt...)
+	vQn = append(vQn, int32(5))
+	vQn = append(vQn, int32(5))
 	return allV, vQn
 }

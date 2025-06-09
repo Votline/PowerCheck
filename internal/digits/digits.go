@@ -1,12 +1,12 @@
 package digits
 
 const (
-	minX = -0.2
-	maxX = -0.1
+	minX = -0.3
+	maxX = -0.2
 	scale = 1.5
 	
-	maxY = 0.2 * scale
-	minY = -0.39 * scale
+	maxY = 0.4 * scale
+	minY = -0.19 * scale
 )
 
 func CreateVertexDigits(number int, offset float32) ([]float32, int32) {

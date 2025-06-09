@@ -3,8 +3,9 @@ package render
 import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 
-	"PowerCheck/internal/shaders"
 	"PowerCheck/internal/ui"
+	"PowerCheck/internal/power"
+	"PowerCheck/internal/shaders"
 )
 
 func Setup() uint32 {
@@ -35,8 +36,8 @@ func Setup() uint32 {
 }
 
 func Digits() {
-	var power string = "100"
-	allV, vQn := ui.GetDigits(power)
+	pw := power.Show()
+	allV, vQn := ui.GetDigits(pw)
 	draw(allV, vQn)
 }
 
