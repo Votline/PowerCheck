@@ -27,7 +27,7 @@ func Show() string {
 
 func Check() bool {
 	pwr, _ := strconv.Atoi(Show())
-	if pwr > 10 {
+	if pwr < 10 {
 		return true
 	}
 	return false
