@@ -16,6 +16,7 @@ func Setup() uint32 {
 	err := shaders.CompileAndAttachShaders(program)
 	if err != nil {return 0}
 	gl.LinkProgram(program)
+	
 
 	var vao uint32
 	gl.GenVertexArrays(1, &vao)

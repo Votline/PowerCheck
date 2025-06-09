@@ -38,19 +38,7 @@ func CreateWindow() *glfw.Window  {
 	vidMode := glfw.GetPrimaryMonitor().GetVideoMode()
 	window.SetPos(vidMode.Width-220, vidMode.Height-1075)
 
-	window.SetMouseButtonCallback(func(w *glfw.Window, btn glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey){
-		if btn == glfw.MouseButtonLeft && action == glfw.Press {
-			_, _, btns := box4btns()
-			if crBtn := HoverOnBtn(w, btns); crBtn != nil {
-				switch crBtn.Text{
-				case "shutdown":
-					cmd.Shutdown()
-				case "suspend":
-					cmd.Suspend()
-				}
-			}
-		}
-	})
+	window.SetMouseButtonCallback(mCb)
 
 	return window
 }
@@ -69,6 +57,19 @@ func GetDigits(power string) ([]float32, []int32) {
 	}
 	return allV, vQn
 }
+func mCb(w *glfw.Window, btn glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey){
+		if btn == glfw.MouseButtonLeft && action == glfw.Press {
+			_, _, btns := box4btns()
+			if crBtn := HoverOnBtn(w, btns); crBtn != nil {
+				switch crBtn.Text{
+				case "shutdown":
+					cmd.Shutdown()
+				case "suspend":
+					cmd.Suspend()
+				}
+			}
+		}
+	}
 
 func GetButtons() ([]float32, []int32) {
 	allV, vQn := text4btns()
