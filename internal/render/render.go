@@ -40,11 +40,11 @@ func Digits() {
 	draw(allV, vQn)
 }
 
-/*func Buttons() {
+func Buttons() {
 	allV, vQn := ui.GetButtons()
 	draw(allV, vQn)
 }
-*/
+
 func draw(allV []float32, vQn []int32) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(allV)*4, gl.Ptr(allV), gl.STATIC_DRAW)
 	start := int32(0)

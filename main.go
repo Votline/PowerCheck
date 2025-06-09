@@ -35,6 +35,7 @@ func main() {
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 		
 		render.Digits()
+		render.Buttons()
 
 		window.SwapBuffers()
 		glfw.PollEvents()
