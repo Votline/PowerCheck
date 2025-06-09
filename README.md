@@ -4,7 +4,7 @@ PowerCheck is a lightweight battery monitoring application built with OpenGL and
 
 ## Description
 
-The application displays current battery level in a clean, always-on-top window.
+The application displays current battery level.
 
 ### Key Features:
 - **Battery percentage**: Accurate reading from `/sys/class/power_supply/BAT0/capacity`
