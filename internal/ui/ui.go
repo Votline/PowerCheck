@@ -34,12 +34,13 @@ func CreateWindow() *glfw.Window  {
 		window = nil
 	}
 	window.MakeContextCurrent()
-	glfw.SwapInterval(1)
+	window.SetAttrib(glfw.Floating, 1)
 	vidMode := glfw.GetPrimaryMonitor().GetVideoMode()
 	window.SetPos(vidMode.Width-220, vidMode.Height-1075)
 
 	window.SetMouseButtonCallback(mCb)
 
+	glfw.SwapInterval(1)
 	return window
 }
 

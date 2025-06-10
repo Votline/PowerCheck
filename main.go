@@ -1,10 +1,11 @@
 package main
 
 import (
-	"flag"
 	"log"
-	"runtime"
 	"time"
+	"sync"
+	"flag"
+	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -29,64 +30,66 @@ func main() {
 	if err := gl.Init(); err != nil {
 		log.Fatalln("OpenGL init error. \nErr: ", err)
 	}
+
 	var window *glfw.Window
 	var program uint32
 	pm := power.NewPM()
 
-	if !*smode {
-		window = ui.CreateWindow()
-		if window == nil {
-			return
+	rCh := make(chan struct{}, 1)
+	var rMu sync.Mutex
+	defer close(rCh)
+
+	go func() {
+		ticker := time.NewTicker(500 * time.Millisecond)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			if *smode && power.Check() && pm.NfCnt < 4 {
+				pm.NfCnt++
+				rCh <- struct{}{}
+				time.Sleep(1 * time.Minute)
+			} else if pm.NfCnt >= 4 {
+				pm.NfCnt = 0
+				time.Sleep(3 *  time.Minute)
+			}
 		}
+	}()
 
-		program = render.Setup()
-		if program == 0 {
-			return
-		}
-	}
-	for {	
-		if window != nil && !window.ShouldClose() {
-			gl.Clear(gl.COLOR_BUFFER_BIT)
-
-			render.Digits()
-			render.Buttons()
-
-			window.SwapBuffers()
-			glfw.PollEvents()
-		} else if window != nil && window.ShouldClose() {
-			window.Destroy()
-			window = nil
-		} else if *smode {
-			if power.Check() && pm.NfCnt < 4 {
-				time.Sleep(pm.Delay)
-				if window == nil {
-					glfw.Terminate()
-					pm.NfCnt++
-					pm.Delay = (5*time.Second)
-					setupWin(&window, &program)
-					go func(){
-						if pm.NfCnt >= 3 {
-							time.Sleep(5*time.Second)
-							pm.NfCnt = 0
-						}
-					}()
-					continue
-				}
-				time.Sleep(5 * time.Second)
+	for {
+		select {
+		case <-rCh:
+			rMu.Lock()
+			if window == nil {
+				initWin(&window, &program)
+			}
+			rMu.Unlock()
+		default:
+			if window != nil && !window.ShouldClose() {
+				rMu.Lock()
+				renderFrame(window)
+				rMu.Unlock()
+				glfw.PollEvents()
+			} else if window != nil {
+				rMu.Lock()
+				window.Destroy()
+				window = nil
+				rMu.Unlock()
 			} else {
-				break
+				time.Sleep(16 * time.Millisecond)
 			}
 		}
 	}
+
 }
 
-func setupWin(w **glfw.Window, pg *uint32) bool {
-	if err := gl.Init(); err != nil {
-		log.Fatalln("OpenGL init error. \nErr: ", err)
-	}
-	if err := glfw.Init(); err != nil {
-		log.Fatalln("GLFW init error. \nErr: ", err)
-	}
+func renderFrame(window *glfw.Window) {
+	gl.Clear(gl.COLOR_BUFFER_BIT)
+	render.Digits()
+	render.Buttons()
+	window.SwapBuffers()
+}
+
+func initWin(w **glfw.Window, pg *uint32) bool {
 	*w = ui.CreateWindow()
 	if *w == nil {
 		return false
