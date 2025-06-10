@@ -39,6 +39,10 @@ func main() {
 	var rMu sync.Mutex
 	defer close(rCh)
 
+	if !*smode {
+		initWin(&window, &program)
+	}
+
 	go func() {
 		ticker := time.NewTicker(500 * time.Millisecond)
 		defer ticker.Stop()
@@ -76,6 +80,9 @@ func main() {
 				rMu.Unlock()
 			} else {
 				time.Sleep(16 * time.Millisecond)
+			}
+			if window != nil && window.ShouldClose() && !*smode{
+				return
 			}
 		}
 	}
