@@ -16,17 +16,33 @@ The application displays current battery level.
 
 ## Technologies
 - **Go** (1.24.3) - primary language
-- **OpenGL** - graphics rendering
-- **GLFW** (v3.3) - window management
+- **[Go-gl](https://github.com/go-gl/gl)** - graphics rendering
+- **[Go-gl/glfw](https://github.com/go-gl/glfw)** (v3.3) - window management
 
-## Installation
-```bash
-git clone https://github.com/Votline/PowerCheck && cd PowerCheck 
-```
-```bash
-go mod download
-```
+## Installation & Building
 
-```bash
-go build
-```
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Votline/PowerCheck
+    cd Clarity
+    ```
+
+2.  **Download dependencies**:
+    ```bash
+    go mod download
+    ```
+
+3.  **Build the application**:
+    ```bash
+    go build -o powercheck
+    ```
+
+4.  **Run**:
+    ```bash
+    ./powercheck
+    ```
+
+## Licenses
+This project is licensed under [GNU AGPL v3](LICENSE).
+
+The full license texts are available in the [licenses directory](licenses/)

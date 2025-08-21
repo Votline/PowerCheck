@@ -28,7 +28,7 @@ func CreateWindow() *glfw.Window  {
 	glfw.WindowHint(glfw.TransparentFramebuffer, glfw.True)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCompatProfile)
-	window, err := glfw.CreateWindow(windowWidth, windowHeight, "TimeCheck", nil, nil)
+	window, err := glfw.CreateWindow(windowWidth, windowHeight, "PowerCheck", nil, nil)
 	if err != nil {
 		log.Println("Create window error. \nErr: ", err)
 		window = nil
