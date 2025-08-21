@@ -24,7 +24,7 @@ The application displays current battery level.
 1.  **Clone the repository**:
     ```bash
     git clone https://github.com/Votline/PowerCheck
-    cd Clarity
+    cd PowerCheck
     ```
 
 2.  **Download dependencies**:
