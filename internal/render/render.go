@@ -2,56 +2,46 @@ package render
 
 import (
 	"github.com/go-gl/gl/v4.1-core/gl"
-
-	"PowerCheck/internal/ui"
-	"PowerCheck/internal/power"
-	"PowerCheck/internal/shaders"
 )
 
-func Setup() uint32 {
+func Setup() (uint32, int32) {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	
-	program := gl.CreateProgram()
-	err := shaders.CompileAndAttachShaders(program)
-	if err != nil {return 0}
-	gl.LinkProgram(program)
-	
+	pg := gl.CreateProgram()
+	shaders := attachShaders(pg)
 
-	var vao uint32
+	gl.LinkProgram(pg)
+	gl.UseProgram(pg)
+
+	ofl := gl.GetUniformLocation(pg, gl.Str("xOffset\x00"))
+	detachShaders(pg, shaders)
+
+	gl.ClearColor(0.0, 0.0, 0.0, 0.7)
+
+	return pg, ofl
+}
+
+func CreateVAO(vtc []float32) uint32 {
+	var vao, vbo uint32
 	gl.GenVertexArrays(1, &vao)
-	gl.BindVertexArray(vao)
-
-	var vbo uint32
 	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, nil)
-	gl.EnableVertexAttribArray(0)
+	gl.BindVertexArray(vao)
+		gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+		gl.BufferData(gl.ARRAY_BUFFER, len(vtc)*4, gl.Ptr(vtc),gl.STATIC_DRAW)
 
-	gl.LineWidth(3.0)
-	gl.UseProgram(program)
-	gl.ClearColor(0.0, 0.0, 0.0, 0.9)
+		gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, nil)
+		gl.EnableVertexAttribArray(0)
+	gl.BindVertexArray(0)
 
-	return program
+	return vao
 }
 
-func Digits() {
-	pw := power.Show()
-	allV, vQn := ui.GetDigits(pw)
-	draw(allV, vQn)
-}
-
-func Buttons() {
-	allV, vQn := ui.GetButtons()
-	draw(allV, vQn)
-}
-
-func draw(allV []float32, vQn []int32) {
-	gl.BufferData(gl.ARRAY_BUFFER, len(allV)*4, gl.Ptr(allV), gl.STATIC_DRAW)
-	start := int32(0)
-	for _, vt := range vQn {
-		gl.DrawArrays(gl.LINE_STRIP, start, vt)
-		start += vt
-	}
+func ElemRender(pg uint32, ofl int32, vao uint32, vtq int32, offset float32) {
+	gl.UseProgram(pg)
+	
+	gl.Uniform1f(ofl, offset)
+	gl.BindVertexArray(vao)
+	gl.DrawArrays(gl.LINE_STRIP, 0, vtq)
 }

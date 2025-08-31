@@ -2,16 +2,15 @@ package main
 
 import (
 	"log"
-	"time"
-	"sync"
-	"flag"
+	//"time"
+	//"flag"
 	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"PowerCheck/internal/ui"
-	"PowerCheck/internal/power"
+	//"PowerCheck/internal/power"
 	"PowerCheck/internal/render"
 )
 
@@ -20,8 +19,8 @@ func init() {
 }
 
 func main() {
-	smode := flag.Bool("smode", false, "Silence mode")
-	flag.Parse()
+	//smode := flag.Bool("smode", false, "Silence mode")
+	//flag.Parse()
 
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("GLFW init error. \nErr: ", err)
@@ -31,18 +30,18 @@ func main() {
 		log.Fatalln("OpenGL init error. \nErr: ", err)
 	}
 
-	var window *glfw.Window
-	var program uint32
-	pm := power.NewPM()
+	win := ui.CreateWin()
+	pg, ofl := render.Setup()
+	//pm := power.NewPM()
+	pc := ui.CreatePC(pg, ofl)
 
-	rCh := make(chan struct{}, 1)
-	var rMu sync.Mutex
-	defer close(rCh)
-
-	if !*smode {
-		initWin(&window, &program)
+	for !win.ShouldClose() {
+		renderFrame(win, pc)
 	}
 
+/*	rCh := make(chan struct{}, 1)
+	defer close(rCh)
+	
 	go func() {
 		ticker := time.NewTicker(500 * time.Millisecond)
 		defer ticker.Stop()
@@ -59,53 +58,28 @@ func main() {
 		}
 	}()
 
+	if !*smode {
+		win.Show()
+	}
+
 	for {
 		select {
 		case <-rCh:
-			rMu.Lock()
-			if window == nil {
-				initWin(&window, &program)
-			}
-			rMu.Unlock()
+			win.Show()
+			renderFrame(win, pc)
 		default:
-			if window != nil && !window.ShouldClose() {
-				rMu.Lock()
-				renderFrame(window)
-				rMu.Unlock()
-				glfw.PollEvents()
-			} else if window != nil {
-				rMu.Lock()
-				window.Destroy()
-				window = nil
-				rMu.Unlock()
-			} else {
-				time.Sleep(16 * time.Millisecond)
-			}
-			if window != nil && window.ShouldClose() && !*smode{
-				return
+			if !win.ShouldClose() {
+				renderFrame(win, pc)
 			}
 		}
-	}
-
+	}*/
 }
 
-func renderFrame(window *glfw.Window) {
+func renderFrame(win *glfw.Window, pc *ui.PowerChecker) {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	render.Digits()
-	render.Buttons()
-	window.SwapBuffers()
-}
-
-func initWin(w **glfw.Window, pg *uint32) bool {
-	*w = ui.CreateWindow()
-	if *w == nil {
-		return false
-	}
-	*pg = render.Setup()
-	if *pg == 0 {
-		(*w).Destroy()
-		return false
-	}
-
-	return true
+	
+	pc.Render(win)
+	
+	win.SwapBuffers()
+	glfw.PollEvents()
 }
