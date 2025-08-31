@@ -78,7 +78,7 @@ func (pc *PowerChecker) renderPower() {
 	offset := float32(0.0)
 	nums := []rune(power.Show())
 	if len(nums) == 3 {
-		offset = float32(0.4)
+		offset = float32(0.2)
 	} else if len(nums) == 2 {
 		offset = float32(0.35)
 	} else {
