@@ -88,7 +88,7 @@ func (pc *PowerChecker) renderPower() {
 		digit := int(char - '0')
 		render.ElemRender(pc.pg, pc.ofL,
 			pc.digs[digit].vao, pc.digs[digit].vtq, offset)
-		offset += 0.15
+		offset += 0.23
 	}
 }
 
