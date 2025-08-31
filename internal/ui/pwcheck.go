@@ -70,14 +70,14 @@ func (pc *PowerChecker) Render(win *glfw.Window) {
 	pc.renderBtns()
 
 	for btn, _ := range pc.btns {
-		btn.Hover(win, 210, 90)
+		btn.hover(win, 210, 90)
 	}
 }
 
 func (pc *PowerChecker) renderPower() {
-	offset := float32(0.35)
+	offset := float32(0.0)
 	nums := []rune(power.Show())
-	
+	if len(nums) < 3 {offset = float32(0.4)} else {offset = float32(0.28)}
 	for _, char := range nums {
 		digit := int(char - '0')
 		render.ElemRender(pc.pg, pc.ofL,

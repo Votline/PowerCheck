@@ -32,7 +32,7 @@ func (b *btn) setText(t string) {
 	b.Text = t
 }
 
-func (b *btn) Hover(w *glfw.Window, winW, winH int) (bool) {
+func (b *btn) hover(w *glfw.Window, winW, winH int) (bool) {
 	mX, mY := w.GetCursorPos()
 	glX := float32(mX)/float32(winW)*2-1
 	glY := 1-float32(mY)/float32(winH)*2

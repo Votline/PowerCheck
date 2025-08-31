@@ -2,15 +2,14 @@ package main
 
 import (
 	"log"
-	//"time"
-	//"flag"
+	"flag"
 	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"PowerCheck/internal/ui"
-	//"PowerCheck/internal/power"
+	"PowerCheck/internal/power"
 	"PowerCheck/internal/render"
 )
 
@@ -19,8 +18,8 @@ func init() {
 }
 
 func main() {
-	//smode := flag.Bool("smode", false, "Silence mode")
-	//flag.Parse()
+	smode := flag.Bool("smode", false, "Silence mode")
+	flag.Parse()
 
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("GLFW init error. \nErr: ", err)
@@ -30,49 +29,32 @@ func main() {
 		log.Fatalln("OpenGL init error. \nErr: ", err)
 	}
 
-	win := ui.CreateWin()
-	pg, ofl := render.Setup()
-	//pm := power.NewPM()
-	pc := ui.CreatePC(pg, ofl)
-
-	for !win.ShouldClose() {
-		renderFrame(win, pc)
-	}
-
-/*	rCh := make(chan struct{}, 1)
-	defer close(rCh)
-	
-	go func() {
-		ticker := time.NewTicker(500 * time.Millisecond)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			if *smode && power.Check() && pm.NfCnt < 4 {
-				pm.NfCnt++
-				rCh <- struct{}{}
-				time.Sleep(1 * time.Minute)
-			} else if pm.NfCnt >= 4 {
-				pm.NfCnt = 0
-				time.Sleep(3 *  time.Minute)
-			}
-		}
-	}()
-
-	if !*smode {
-		win.Show()
-	}
-
+	pm := power.NewPM()
+	go pm.Timer(smode)
 	for {
-		select {
-		case <-rCh:
+		win := ui.CreateWin(200, 90, 220, 1075)
+		pg, ofl := render.Setup()
+		pc := ui.CreatePC(pg, ofl)
+		win.SetMouseButtonCallback(ui.BtnCallback(pc, 200, 90))
+
+		if !*smode {
 			win.Show()
-			renderFrame(win, pc)
-		default:
-			if !win.ShouldClose() {
-				renderFrame(win, pc)
-			}
 		}
-	}*/
+
+		for !win.ShouldClose() {
+			select {
+			case <-pm.Pch:
+				win.Show()
+				renderFrame(win, pc)
+			default:
+			}
+			renderFrame(win, pc)
+		}
+		win.Destroy()
+		if !*smode {
+			return
+		}
+	}
 }
 
 func renderFrame(win *glfw.Window, pc *ui.PowerChecker) {

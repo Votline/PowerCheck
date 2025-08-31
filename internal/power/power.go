@@ -9,11 +9,14 @@ import (
 )
 
 type PowerManager struct {
-	NfCnt int
-	Delay time.Duration
+	nfCnt int
+	Pch chan struct{}
 }
 func NewPM() *PowerManager {
-	return &PowerManager{NfCnt: 0}
+	return &PowerManager{
+		nfCnt: 0,
+		Pch: make(chan struct{}, 1),
+	}
 }
 
 func Show() string {
@@ -31,4 +34,20 @@ func Check() bool {
 		return true
 	}
 	return false
+}
+
+func (pm *PowerManager) Timer(smode *bool) {
+	ticker := time.NewTicker(1*time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		if *smode && Check() && pm.nfCnt < 4 {
+			pm.nfCnt++
+			pm.Pch <- struct{}{}
+			time.Sleep(1*time.Minute)
+		} else if pm.nfCnt >= 4 {
+			pm.nfCnt = 0
+			time.Sleep(3*time.Minute)
+		}
+	}
 }

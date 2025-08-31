@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
+
+	"PowerCheck/internal/cmd"
 )
 
 type element interface{
@@ -31,10 +33,7 @@ type btn struct {
 	Text string
 }
 
-const winW = 200
-const winH = 90
-
-func CreateWin() *glfw.Window  {
+func CreateWin(winW, winH, alX, alY int) *glfw.Window  {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.Decorated, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
@@ -47,12 +46,30 @@ func CreateWin() *glfw.Window  {
 		log.Println("Create win error. \nErr: ", err)
 		win = nil
 	}
+	win.Hide()
 	win.MakeContextCurrent()
 	win.SetAttrib(glfw.Floating, 1)
 
 	vidMode := glfw.GetPrimaryMonitor().GetVideoMode()
-	win.SetPos(vidMode.Width-220, vidMode.Height-1075)
+	win.SetPos(vidMode.Width-alX, vidMode.Height-alY)
 
 	glfw.SwapInterval(1)
 	return win
+}
+
+func BtnCallback(pc *PowerChecker, winW, winH int) func(w *glfw.Window, mBtn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
+	return func(w *glfw.Window, mBtn glfw.MouseButton, act glfw.Action, mod glfw.ModifierKey) {
+		if mBtn == glfw.MouseButtonLeft && act == glfw.Press {
+			for btn, _ := range pc.btns {
+				if btn.hover(w, winW, winH) {
+					switch btn.Text {
+					case "shutdown":
+						cmd.Shutdown()
+					case "suspend":
+						cmd.Suspend()
+					}
+				}
+			}
+		}
+	}
 }
