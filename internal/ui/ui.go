@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"PowerCheck/internal/cmd"
+	"PowerChecker/internal/cmd"
 )
 
 type element interface{

@@ -1,6 +1,6 @@
-# PowerCheck - Minimalist Battery Monitor
+# PowerChecker - Minimalist Battery Monitor
 
-PowerCheck is a lightweight battery monitoring application built with OpenGL and GLFW.
+PowerChecker is a lightweight battery monitoring application built with OpenGL and GLFW.
 
 ## Description
 
@@ -23,8 +23,8 @@ The application displays current battery level.
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/Votline/PowerCheck
-    cd PowerCheck
+    git clone https://github.com/Votline/PowerChecker
+    cd PowerChecker
     ```
 
 2.  **Download dependencies**:
@@ -43,6 +43,6 @@ The application displays current battery level.
     ```
 
 ## Licenses
-This project is licensed under [GNU AGPL v3](LICENSE).
+This project is licensed under [MIT](LICENSE).
 
 The full license texts are available in the [licenses directory](licenses/)

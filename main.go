@@ -8,9 +8,10 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"PowerCheck/internal/ui"
-	"PowerCheck/internal/power"
-	"PowerCheck/internal/render"
+	"PowerChecker/internal/ui"
+	"PowerChecker/internal/power"
+	"PowerChecker/internal/render"
+	"PowerChecker/internal/config"
 )
 
 func init() {
@@ -28,14 +29,20 @@ func main() {
 	if err := gl.Init(); err != nil {
 		log.Fatalln("OpenGL init error. \nErr: ", err)
 	}
+	log.SetFlags(log.Lshortfile)
+
+	cfg, err := config.Parse()
+	if err != nil {
+		log.Fatalf("Config getting error: %v", err)
+	}
 
 	pm := power.NewPM()
 	go pm.Timer(smode)
 	for {
-		win := ui.CreateWin(200, 90, 220, 1075)
-		pg, ofl := render.Setup()
+		win := ui.CreateWin(cfg.WinW, cfg.WinH, cfg.AlX, cfg.AlY)
+		pg, ofl := render.Setup(cfg.TextC, cfg.BackC)
 		pc := ui.CreatePC(pg, ofl)
-		win.SetMouseButtonCallback(ui.BtnCallback(pc, 200, 90))
+		win.SetMouseButtonCallback(ui.BtnCallback(pc, cfg.WinW, cfg.WinH))
 
 		if !*smode {
 			win.Show()
@@ -45,10 +52,10 @@ func main() {
 			select {
 			case <-pm.Pch:
 				win.Show()
-				renderFrame(win, pc)
+				renderFrame(win, pc, cfg.WinW, cfg.WinH)
 			default:
 			}
-			renderFrame(win, pc)
+			renderFrame(win, pc, cfg.WinW, cfg.WinH)
 		}
 		win.Destroy()
 		if !*smode {
@@ -57,10 +64,10 @@ func main() {
 	}
 }
 
-func renderFrame(win *glfw.Window, pc *ui.PowerChecker) {
+func renderFrame(win *glfw.Window, pc *ui.PowerChecker, winW, winH int) {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	
-	pc.Render(win)
+	pc.Render(win, winW, winH)
 	
 	win.SwapBuffers()
 	glfw.PollEvents()

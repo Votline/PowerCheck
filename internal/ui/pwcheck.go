@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"PowerCheck/internal/power"
-	"PowerCheck/internal/render"
+	"PowerChecker/internal/power"
+	"PowerChecker/internal/render"
 )
 
 type elemMesh struct {
@@ -56,7 +56,7 @@ func CreatePC(pg uint32, ofl int32) *PowerChecker {
 	}
 	pos1 := [4]float32{-0.85, -0.3, -0.18, -0.8}
 	pos2 := [4]float32{0.17, -0.3, 0.85, -0.8}
-	txts := []string{"SD", "SS"}
+	txts := []string{"shutdown", "suspend"}
 	pos := [][4]float32{pos1, pos2}
 	btns := createBtn(pos, txts)
 
@@ -65,19 +65,25 @@ func CreatePC(pg uint32, ofl int32) *PowerChecker {
 	return &PowerChecker{pg: pg, ofL: ofl, digs: digs, btns: btns, lets: lets}
 }
 
-func (pc *PowerChecker) Render(win *glfw.Window) {
+func (pc *PowerChecker) Render(win *glfw.Window, winW, winH int) {
 	pc.renderPower()
 	pc.renderBtns()
 
 	for btn, _ := range pc.btns {
-		btn.hover(win, 210, 90)
+		btn.hover(win, winW, winH)
 	}
 }
 
 func (pc *PowerChecker) renderPower() {
 	offset := float32(0.0)
 	nums := []rune(power.Show())
-	if len(nums) < 3 {offset = float32(0.4)} else {offset = float32(0.28)}
+	if len(nums) == 3 {
+		offset = float32(0.4)
+	} else if len(nums) == 2 {
+		offset = float32(0.35)
+	} else {
+		offset = float32(0.48)
+	}
 	for _, char := range nums {
 		digit := int(char - '0')
 		render.ElemRender(pc.pg, pc.ofL,
