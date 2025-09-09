@@ -10,10 +10,12 @@ const vertexShaderSource = `
 #version 410 core
 
 layout (location = 0) in vec3 aPos;
-uniform float xOffset;
+uniform float scale;
+uniform vec3 offsetLoc;
 
 void main() {
-	gl_Position = vec4(aPos.x+xOffset, aPos.y, aPos.z, 1.0);
+	vec3 scaledPos = aPos * scale;
+	gl_Position = vec4(scaledPos.x+offsetLoc.x, scaledPos.y+offsetLoc.y, scaledPos.z, 1.0);
 }` + "\x00"
 
 const fragmentShaderSource = `

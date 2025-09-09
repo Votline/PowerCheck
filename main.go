@@ -40,8 +40,8 @@ func main() {
 	go pm.Timer(smode)
 	for {
 		win := ui.CreateWin(cfg.WinW, cfg.WinH, cfg.AlX, cfg.AlY)
-		pg, ofl := render.Setup(cfg.TextC, cfg.BackC)
-		pc := ui.CreatePC(pg, ofl)
+		pg, ofL, ofS := render.Setup(cfg.TextC, cfg.BackC)
+		pc := ui.CreatePC(pg, ofL, ofS)
 		win.SetMouseButtonCallback(ui.BtnCallback(pc, cfg.WinW, cfg.WinH))
 
 		if !*smode {

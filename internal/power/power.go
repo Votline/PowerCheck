@@ -19,10 +19,19 @@ func NewPM() *PowerManager {
 	}
 }
 
+func Online() string {
+	data, err := ioutil.ReadFile("/sys/class/power_supply/AC0/online")
+	if err != nil {
+		log.Fatalf("Read battery online error: %v", err)
+	}
+	
+	return strings.TrimSpace(string(data))
+}
+
 func Show() string {
 	data, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/capacity")
 	if err != nil {
-		log.Fatalln("Ошибка при попытке открыть файл по пути: /sys/class/power_supply/BAT0/capacity\n", err)
+		log.Fatalf("Read battery capacity error: %v", err)
 	}
 
 	return strings.TrimSpace(string(data))
