@@ -52,10 +52,12 @@ func main() {
 			select {
 			case <-pm.Pch:
 				win.Show()
-				renderFrame(win, pc, cfg.WinW, cfg.WinH)
 			default:
+				glfw.WaitEvents()
 			}
-			renderFrame(win, pc, cfg.WinW, cfg.WinH)
+			if win.GetAttrib(glfw.Visible) == glfw.True {
+				renderFrame(win, pc, cfg.WinW, cfg.WinH)
+			}
 		}
 		win.Destroy()
 		if !*smode {
@@ -66,9 +68,6 @@ func main() {
 
 func renderFrame(win *glfw.Window, pc *ui.PowerChecker, winW, winH int) {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	
 	pc.Render(win, winW, winH)
-	
 	win.SwapBuffers()
-	glfw.PollEvents()
 }

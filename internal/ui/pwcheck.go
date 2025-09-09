@@ -80,7 +80,7 @@ func (pc *PowerChecker) Render(win *glfw.Window, winW, winH int) {
 
 func (pc *PowerChecker) renderOnline() {
 	nums := []rune(power.Online())
-	offsetLoc := []float32{0.24, 0.6, 0}
+	offsetLoc := []float32{0.22, 0.6, 0}
 
 	for _, char := range nums {
 		digit := int(char - '0')
