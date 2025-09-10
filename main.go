@@ -49,11 +49,12 @@ func main() {
 		}
 
 		for !win.ShouldClose() {
+			glfw.WaitEventsTimeout(0.1)
 			select {
 			case <-pm.Pch:
 				win.Show()
+				glfw.PostEmptyEvent()
 			default:
-				glfw.WaitEvents()
 			}
 			if win.GetAttrib(glfw.Visible) == glfw.True {
 				renderFrame(win, pc, cfg.WinW, cfg.WinH)
